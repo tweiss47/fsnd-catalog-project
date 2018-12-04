@@ -5,3 +5,18 @@ from flask import (
 
 bp = Blueprint('auth', __name__)
 
+
+@bp.route('/signin')
+def signin():
+    return 'signin'
+
+
+@bp.route('/signout')
+def signout():
+    return 'signout'
+
+
+@bp.route('/register')
+def register():
+    return 'register'
+
