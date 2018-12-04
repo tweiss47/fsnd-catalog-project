@@ -18,10 +18,15 @@ def create_app():
     except OSError:
         pass
 
-    # stub route to test initialization
-    @app.route('/test')
-    def hello():
-        return "This is a test for application {}".format(__name__)
+    # register blueprints
+    from . import auth
+    app.register_blueprint(auth.bp)
+
+    from . import catalog
+    app.register_blueprint(catalog.bp)
+
+    from . import api
+    app.register_blueprint(api.bp)
 
     return app
 
