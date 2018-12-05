@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h1>{% block title %}Genre View{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<div class="split-display">
+    <div class="column category">
+        <h2>Genres</h2>
+        {% for genre in genres %}
+        <div class="genre">
+            <a href="{{ url_for('catalog.genre_view', name=genre) }}">{{genre}}</a>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="column item">
+        <h2>{{ selected }} Songs ({{ songs|count }} songs)</h2>
+        {% if g.user %}
+        <a href="{{ url_for('catalog.song_add') }}">Add a new song</a>
+        {% endif %}
+        {% for song in songs %}
+        <div class="songtitle">
+            <a href="{{ url_for('catalog.song_view', id=song.id) }}">{{song.title}}</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
