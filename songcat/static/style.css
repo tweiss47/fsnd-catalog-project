@@ -68,4 +68,7 @@ nav ul li a {
     padding: 0.25em;
 }
 
+.song-article, .song-controls {
+    padding: 0 1em;
+}
 

@@ -24,7 +24,10 @@ def genre_view(name):
 
 @bp.route('/song/<int:id>')
 def song_view(id):
-    return 'song view for {}'.format(id)
+    return render_template(
+        'catalog/song_view.html',
+        song=model.get_song(id)
+    )
 
 
 @bp.route('/song/add', methods=('GET', 'POST'))

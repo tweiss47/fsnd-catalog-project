@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{song.title}}
+{% endblock %}
+
+{% block header %}
+<h2>{{ song.title }}</h2>
+{% endblock %}
+
+
+{% block content %}
+<article class="song-article">
+    <p>Artist: {{ song.artist }}</p>
+    <p>Genre: {{ song.genre }}</p>
+    <p>{{ song.description }}</p>
+</article>
+{% if g.user %}
+<div class="song-controls">
+    <a href="{{ url_for('catalog/song_edit', id=song.id) }}">Edit</a>
+</div>
+{% endif %}
+{% endblock %}
+
