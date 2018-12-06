@@ -22,7 +22,7 @@
         {% for song in songs %}
         <div class="songtitle">
             <a href="{{ url_for('catalog.song_view', id=song.id) }}">{{song.title}}</a>
-            <span>({{ song.genre }})</span>
+            <span>({{ song.genre.name }})</span>
         </div>
         {% endfor %}
     </div>

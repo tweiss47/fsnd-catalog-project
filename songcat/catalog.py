@@ -1,5 +1,5 @@
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, render_template
 )
 from . import model
 
@@ -9,14 +9,18 @@ bp = Blueprint('catalog', __name__)
 
 @bp.route('/')
 def index():
-    return render_template('catalog/index.html', genres=model.genres, songs=model.songs)
+    return render_template(
+        'catalog/index.html',
+        genres=model.get_genres(),
+        songs=model.get_songs()
+    )
 
 
 @bp.route('/genre/<path:name>')
 def genre_view(name):
     return render_template(
         'catalog/genre_view.html',
-        genres=model.genres,
+        genres=model.get_genres(),
         selected=name,
         songs=model.songs_for(name)
     )
@@ -43,4 +47,3 @@ def song_edit(id):
 @bp.route('/song/<int:id>/delete', methods=('GET', 'POST'))
 def song_delete(id):
     return 'delete a song'
-
