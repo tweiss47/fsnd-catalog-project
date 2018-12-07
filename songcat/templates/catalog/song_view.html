@@ -14,6 +14,7 @@
     <p>Artist: {{ song.artist }}</p>
     <p>Genre: {{ song.genre.name }}</p>
     <p>{{ song.description }}</p>
+    <p>Added By: {{ song.user.username }}</p>
 </article>
 {% if g.user %}
 <div class="song-controls">

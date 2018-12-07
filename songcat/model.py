@@ -2,8 +2,18 @@ import click
 import datetime
 from flask.cli import with_appcontext
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash
+
 
 db = SQLAlchemy()
+
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(128), nullable=False)
+    username = db.Column(db.String(128), nullable=False)
+    password = db.Column(db.String(128), nullable=True)
+    provider = db.Column(db.String(64), nullable=False)
 
 
 class Genre(db.Model):
@@ -20,6 +30,9 @@ class Song(db.Model):
 
     genre_id = db.Column(db.Integer, db.ForeignKey('genre.id'))
     genre = db.relationship(Genre)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship(User)
 
 
 @click.command('init-model')
@@ -46,10 +59,19 @@ def add_test_data():
     for v in genres.values():
         db.session.add(v)
 
+    test_user = User(
+        username='Bob',
+        email='bob@dobbs.com',
+        password=generate_password_hash('welcome'),
+        provider='local'
+    )
+    db.session.add(test_user)
+
     db.session.add(
         Song(
             title='Across the Tappan Zee',
             genre=genres['Folk'],
+            user=test_user,
             artist='Glenn Jones',
             description='''
             Instrumental for two banjos from the album My Garden State.
@@ -60,6 +82,7 @@ def add_test_data():
         Song(
             title='All Day Sucker',
             genre=genres['Soul/R&B'],
+            user=test_user,
             artist='Stevie Wonder',
             description='''
             Masterful funkiness from Stevie Wonder's album Songs in the Key
@@ -71,6 +94,7 @@ def add_test_data():
         Song(
             title='La Grange',
             genre=genres['Blues'],
+            user=test_user,
             artist='ZZ Top',
             description='''
             From the 1973 album Tres Hombres.
@@ -81,6 +105,7 @@ def add_test_data():
         Song(
             title='Little Maggie',
             genre=genres['Folk'],
+            user=test_user,
             artist='Robert Plant',
             description='''
             A reworking of an an Appalacian folk song. From Robert Plant's 2014
