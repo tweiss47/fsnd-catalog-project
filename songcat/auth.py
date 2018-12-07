@@ -1,5 +1,5 @@
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, render_template
 )
 
 
@@ -8,7 +8,7 @@ bp = Blueprint('auth', __name__)
 
 @bp.route('/signin')
 def signin():
-    return 'signin'
+    return render_template('auth/signin.html')
 
 
 @bp.route('/signout')
@@ -18,5 +18,4 @@ def signout():
 
 @bp.route('/register')
 def register():
-    return 'register'
-
+    return render_template('auth/register.html')

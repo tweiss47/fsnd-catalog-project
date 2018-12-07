@@ -71,4 +71,27 @@ nav ul li a {
 .song-article, .song-controls {
     padding: 0 1em;
 }
-
+.content form {
+    margin: 1em 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0 1em;
+    width: 40%;
+}
+.content label {
+    font-weight: bold;
+    margin-bottom: 0.5em;
+}
+.content input {
+    margin-bottom: 1em;
+    padding: 0.25em 0.25em;
+}
+button {
+    background-color: mediumblue;
+    color: white;
+    padding: 0.5em 0.5em;
+    margin-top: 1em;
+    border: none;
+    width: 100px;
+    cursor: pointer;
+}
