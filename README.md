@@ -15,9 +15,22 @@ respectively.
 
 ## Startup
 
-Set the following environment variables.
+Set the following environment variables to run the project using the `flask`
+command in development mode.
 
 ```
 FLASK_APP=songcat
 FLASK_ENV=development
 ```
+
+To initialize the database run `flask init-model`. This will drop tables and
+recreate the database schema.
+
+To load the database with some test data run `flask add-test-data`.
+
+Start the flask server using `flask run`.
+
+## Project Features
+
+## Notes on the Code
+
