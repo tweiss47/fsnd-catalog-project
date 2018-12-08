@@ -39,6 +39,7 @@ nav ul li a {
 /* Content styles */
 .content {
     padding: 0.5rem;
+    width: 40%;
 }
 
 .content header {
@@ -76,7 +77,6 @@ nav ul li a {
     display: flex;
     flex-direction: column;
     padding: 0 1em;
-    width: 40%;
 }
 .content label {
     font-weight: bold;
@@ -94,4 +94,10 @@ button {
     border: none;
     width: 100px;
     cursor: pointer;
+}
+.flash {
+    margin-left: 1em;
+    padding: 0.5em;
+    background-color: lightyellow;
+    font-weight: bold;
 }

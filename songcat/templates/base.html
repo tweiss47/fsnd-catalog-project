@@ -9,7 +9,7 @@
             <h1>Songcat</h1>
             <ul>
                 {% if g.user %}
-                <li><span>{{ g.user.name }}</span></li>
+                <li><span>{{ g.user.username }}</span></li>
                 <li><a href="{{ url_for('auth.signout') }}">Sign Out</a></li>
                 {% else %}
                 <li><a href="{{ url_for('auth.signin') }}">Sign In</a></li>
