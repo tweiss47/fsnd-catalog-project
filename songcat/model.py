@@ -1,5 +1,5 @@
 import click
-import datetime
+from datetime import datetime
 from flask.cli import with_appcontext
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash
@@ -26,7 +26,11 @@ class Song(db.Model):
     title = db.Column(db.String(128), nullable=False)
     artist = db.Column(db.String(128), nullable=False)
     description = db.Column(db.String(512), nullable=True)
-    last_update = db.Column(db.DateTime, onupdate=datetime.datetime.now)
+    last_update = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow
+    )
 
     genre_id = db.Column(db.Integer, db.ForeignKey('genre.id'))
     genre = db.relationship(Genre)
@@ -124,6 +128,10 @@ def songs_for(genre):
 def get_genres():
     genres = Genre.query.order_by(Genre.name).all()
     return [n.name for n in genres]
+
+
+def get_genre(name):
+    return Genre.query.filter(Genre.name == name).first()
 
 
 def get_songs():

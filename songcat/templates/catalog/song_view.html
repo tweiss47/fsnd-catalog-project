@@ -15,10 +15,12 @@
     <p>Genre: {{ song.genre.name }}</p>
     <p>{{ song.description }}</p>
     <p>Added By: {{ song.user.username }}</p>
+    <p>Last Updated At: {{ song.last_update }}</p>
 </article>
-{% if g.user %}
+{% if g.user and g.user.id == song.user.id %}
 <div class="song-controls">
-    <a href="{{ url_for('catalog/song_edit', id=song.id) }}">Edit</a>
+    <a href="{{ url_for('catalog.song_edit', id=song.id) }}">Edit</a>
+    <a href="{{ url_for('catalog.song_delete', id=song.id) }}">Delete</a>
 </div>
 {% endif %}
 {% endblock %}

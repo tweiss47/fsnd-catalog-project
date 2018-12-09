@@ -1,5 +1,5 @@
 from flask import (
-    Blueprint, render_template
+    Blueprint, render_template, request, flash, redirect, url_for, g
 )
 from . import model
 
@@ -36,7 +36,42 @@ def song_view(id):
 
 @bp.route('/song/add', methods=('GET', 'POST'))
 def song_add():
-    return 'add a song'
+    if request.method == 'POST':
+        title = request.form.get('title')
+        genre_name = request.form.get('genre')
+        artist = request.form.get('artist')
+        description = request.form.get('description')
+
+        error = None
+        if title is None:
+            error = 'Title is required.'
+        elif genre_name is None:
+            error = 'Genre is required.'
+        elif artist is None:
+            error = 'Artist is required.'
+        else:
+            genre = model.get_genre(genre_name)
+            if genre is None:
+                error = 'Unknown genre {}'.format(genre_name)
+
+        if error is None:
+            song = model.Song(
+                title=title,
+                genre=genre,
+                artist=artist,
+                description=description,
+                user=g.user
+            )
+            model.db.session.add(song)
+            model.db.session.commit()
+            return redirect(url_for('catalog.index'))
+
+        flash(error)
+
+    return render_template(
+        'catalog/song_add.html',
+        genres=model.get_genres()
+    )
 
 
 @bp.route('/song/<int:id>/edit', methods=('GET', 'POST'))

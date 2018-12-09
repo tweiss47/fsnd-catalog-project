@@ -82,9 +82,13 @@ nav ul li a {
     font-weight: bold;
     margin-bottom: 0.5em;
 }
-.content input {
+.content input, .content select, .content textarea {
     margin-bottom: 1em;
     padding: 0.25em 0.25em;
+}
+.content textarea {
+    min-height: 6em;
+    resize: vertical;
 }
 button {
     background-color: mediumblue;
