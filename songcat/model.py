@@ -77,9 +77,9 @@ def add_test_data():
             genre=genres['Folk'],
             user=test_user,
             artist='Glenn Jones',
-            description='''
-            Instrumental for two banjos from the album My Garden State.
-            '''
+            description=(
+                "Instrumental for two banjos from the album My Garden State."
+            )
         )
     )
     db.session.add(
@@ -88,10 +88,10 @@ def add_test_data():
             genre=genres['Soul/R&B'],
             user=test_user,
             artist='Stevie Wonder',
-            description='''
-            Masterful funkiness from Stevie Wonder's album Songs in the Key
-            of Life.
-            '''
+            description=(
+                "Masterful funkiness from Stevie Wonder's album Songs in the "
+                "Key of Life."
+            )
         )
     )
     db.session.add(
@@ -100,9 +100,9 @@ def add_test_data():
             genre=genres['Blues'],
             user=test_user,
             artist='ZZ Top',
-            description='''
-            From the 1973 album Tres Hombres.
-            '''
+            description=(
+                "From the 1973 album Tres Hombres."
+            )
         )
     )
     db.session.add(
@@ -111,10 +111,10 @@ def add_test_data():
             genre=genres['Folk'],
             user=test_user,
             artist='Robert Plant',
-            description='''
-            A reworking of an an Appalacian folk song. From Robert Plant's 2014
-            album Lullaby and the Ceasless Roar
-            '''
+            description=(
+                "A reworking of an an Appalacian folk song. From Robert "
+                "Plant's 2014 album Lullaby and the Ceasless Roar"
+            )
         )
     )
     db.session.commit()

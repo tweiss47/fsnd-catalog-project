@@ -68,15 +68,49 @@ def song_add():
 
         flash(error)
 
-    return render_template(
-        'catalog/song_add.html',
-        genres=model.get_genres()
-    )
+    return render_template('catalog/song_add.html', genres=model.get_genres())
 
 
 @bp.route('/song/<int:id>/edit', methods=('GET', 'POST'))
 def song_edit(id):
-    return 'edit a song'
+    song = model.get_song(id)
+
+    if request.method == 'POST':
+        title = request.form.get('title')
+        genre_name = request.form.get('genre')
+        artist = request.form.get('artist')
+        description = request.form.get('description')
+
+        error = None
+        if title is None:
+            error = 'Title is required.'
+        elif genre_name is None:
+            error = 'Genre is required.'
+        elif artist is None:
+            error = 'Artist is required.'
+        elif song.user.id != g.user.id:
+            error = 'Songcat entry owned by {}'.format(song.user_id)
+        else:
+            genre = model.get_genre(genre_name)
+            if genre is None:
+                error = 'Unknown genre {}'.format(genre_name)
+
+        if error is None:
+            song.title = title
+            song.genre = genre
+            song.artist = artist
+            song.description = description
+
+            model.db.session.add(song)
+            model.db.session.commit()
+
+            return redirect(url_for('catalog.index'))
+
+    return render_template(
+        'catalog/song_update.html',
+        genres=model.get_genres(),
+        song=song
+    )
 
 
 @bp.route('/song/<int:id>/delete', methods=('GET', 'POST'))
