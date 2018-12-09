@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h1>{% block title %}Edit {{ song.title }}{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<form method="post">
+    <label for="title">Title</label>
+    <input name="title" id="title" value="{{ song.title }}" required>
+    <label for="genre">Genre</label>
+    <select name="genre" id="genre">
+    {% for genre in genres %}
+        {% if genre == song.genre.name %}
+        <option selected>{{ genre }}</option>
+        {% else %}
+        <option>{{ genre }}</option>
+        {% endif %}
+    {% endfor %}
+    </select>
+    <label for="artist">Artist</label>
+    <input name="artist" id="artist" value="{{ song.artist }}" required>
+    <label for="description">Description</label>
+    <textarea name="description" id="description">{{ song.description }}</textarea>
+    <button type="input">Update Song</button>
+</form>
+{% endblock %}
