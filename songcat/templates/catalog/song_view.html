@@ -6,6 +6,14 @@
 
 {% block header %}
 <h2>{{ song.title }}</h2>
+<script>
+    function editRoute() {
+        return "{{ url_for('catalog.song_edit', id=song.id) }}";
+    }
+    function deleteRoute() {
+        return "{{ url_for('catalog.song_delete', id=song.id) }}";
+    }
+</script>
 {% endblock %}
 
 
@@ -15,12 +23,11 @@
     <p>Genre: {{ song.genre.name }}</p>
     <p>{{ song.description }}</p>
     <p>Added By: {{ song.user.username }}</p>
-    <p>Last Updated At: {{ song.last_update }}</p>
 </article>
 {% if g.user and g.user.id == song.user.id %}
-<div class="song-controls">
-    <a href="{{ url_for('catalog.song_edit', id=song.id) }}">Edit</a>
-    <a href="{{ url_for('catalog.song_delete', id=song.id) }}">Delete</a>
+<div id="song-controls">
+    <button onclick="window.location.href=editRoute()">Edit</button>
+    <button onclick="window.location.href=deleteRoute()">Delete</button>
 </div>
 {% endif %}
 {% endblock %}

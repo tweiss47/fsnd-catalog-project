@@ -36,6 +36,7 @@ def song_view(id):
 
 @bp.route('/song/add', methods=('GET', 'POST'))
 def song_add():
+    in_genre = request.args.get('in_genre', '')
     if request.method == 'POST':
         title = request.form.get('title')
         genre_name = request.form.get('genre')
@@ -68,7 +69,11 @@ def song_add():
 
         flash(error)
 
-    return render_template('catalog/song_add.html', genres=model.get_genres())
+    return render_template(
+        'catalog/song_add.html',
+        genres=model.get_genres(),
+        in_genre=in_genre
+    )
 
 
 @bp.route('/song/<int:id>/edit', methods=('GET', 'POST'))
@@ -115,4 +120,13 @@ def song_edit(id):
 
 @bp.route('/song/<int:id>/delete', methods=('GET', 'POST'))
 def song_delete(id):
-    return 'delete a song'
+    if request.method == 'POST':
+        song = model.get_song(id)
+        model.db.session.delete(song)
+        model.db.session.commit()
+        return redirect(url_for('catalog.index'))
+
+    return render_template(
+        'catalog/song_delete.html',
+        song=model.get_song(id)
+    )

@@ -10,13 +10,17 @@ Add a Song
 
 
 {% block content %}
-<form method="post">
+<form method="post" action="{{ url_for('catalog.song_add') }}">
     <label for="title">Title</label>
     <input name="title" id="title" required>
     <label for="genre">Genre</label>
     <select name="genre" id="genre">
     {% for genre in genres %}
+        {% if in_genre == genre %}
+        <option selected>{{ genre }}</option>
+        {% else %}
         <option>{{ genre }}</option>
+        {% endif %}
     {% endfor %}
     </select>
     <label for="artist">Artist</label>

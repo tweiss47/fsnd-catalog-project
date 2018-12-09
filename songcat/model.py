@@ -134,8 +134,8 @@ def get_genre(name):
     return Genre.query.filter(Genre.name == name).first()
 
 
-def get_songs():
-    return Song.query.order_by(Song.last_update.desc())[:10]
+def get_songs(limit=10):
+    return Song.query.order_by(Song.last_update.desc()).limit(limit)
 
 
 def get_song(id):

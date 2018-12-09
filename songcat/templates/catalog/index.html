@@ -2,6 +2,11 @@
 
 {% block header %}
 <h1>{% block title %}Song Catalog{% endblock %}</h1>
+<script>
+    function add_song_route() {
+        return "{{ url_for('catalog.song_add') }}";
+    }
+</script>
 {% endblock %}
 
 {% block content %}
@@ -17,7 +22,7 @@
     <div class="column item">
         <h2>Latest Songs</h2>
         {% if g.user %}
-        <a href="{{ url_for('catalog.song_add') }}">Add a new song</a>
+        <button onclick="window.location.href=add_song_route()">Add a song</button>
         {% endif %}
         {% for song in songs %}
         <div class="songtitle">
