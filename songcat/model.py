@@ -48,6 +48,17 @@ class Song(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship(User)
 
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'artist': self.artist,
+            'genre': self.genre.name,
+            'description': self.description,
+            'user_id': self.user.username
+        }
+
 
 @click.command('init-model')
 @with_appcontext
