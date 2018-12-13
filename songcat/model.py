@@ -8,6 +8,8 @@ from werkzeug.security import generate_password_hash
 db = SQLAlchemy()
 
 
+# Database model
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(128), nullable=False)
@@ -60,9 +62,12 @@ class Song(db.Model):
         }
 
 
+# Setup utility commands to initialize the database.
+
 @click.command('init-model')
 @with_appcontext
 def init_model_command():
+    '''Drop database and recreate the schema.'''
     db.drop_all()
     db.create_all()
 
@@ -70,6 +75,7 @@ def init_model_command():
 @click.command('init-test-data')
 @with_appcontext
 def init_test_data():
+    '''Add some songs and the list of genres to the database.'''
     genres = {
         'Folk': Genre(name='Folk'),
         'Blues': Genre(name='Blues'),
@@ -142,6 +148,9 @@ def init_test_data():
     db.session.commit()
 
 
+# Simple wrappers for most of the database calls used in the catalog module.
+# These were initially mocked before the database model was implemented.
+
 def songs_for(genre):
     g = Genre.query.filter(Genre.name == genre).first()
     return Song.query.filter(Song.genre_id == g.id).order_by(Song.title).all()
@@ -156,8 +165,12 @@ def get_genre(name):
     return Genre.query.filter(Genre.name == name).first()
 
 
-def get_songs(limit=10):
+def get_songs(limit):
     return Song.query.order_by(Song.last_update.desc()).limit(limit)
+
+
+def get_all_songs():
+    return Song.query.order_by(Song.last_update.desc()).all()
 
 
 def get_song(id):

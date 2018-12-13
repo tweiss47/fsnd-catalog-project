@@ -12,7 +12,7 @@ def index():
     return render_template(
         'catalog/index.html',
         genres=model.get_genres(),
-        songs=model.get_songs()
+        songs=model.get_songs(10)
     )
 
 
@@ -36,13 +36,16 @@ def song_view(id):
 
 @bp.route('/song/add', methods=('GET', 'POST'))
 def song_add():
+    # When invoked from the genre view in_genre is passed as a parameter
     in_genre = request.args.get('in_genre', '')
     if request.method == 'POST':
+        # Gather form input.
         title = request.form.get('title')
         genre_name = request.form.get('genre')
         artist = request.form.get('artist')
         description = request.form.get('description')
 
+        # Validate the input.
         error = None
         if title is None:
             error = 'Title is required.'
@@ -55,6 +58,7 @@ def song_add():
             if genre is None:
                 error = 'Unknown genre {}'.format(genre_name)
 
+        # Commit the new song.
         if error is None:
             song = model.Song(
                 title=title,
@@ -67,6 +71,7 @@ def song_add():
             model.db.session.commit()
             return redirect(url_for('catalog.index'))
 
+        # Report error when rendering rendering after a POST attempt.
         flash(error)
 
     return render_template(
@@ -81,11 +86,13 @@ def song_edit(id):
     song = model.get_song(id)
 
     if request.method == 'POST':
+        # Gather form input.
         title = request.form.get('title')
         genre_name = request.form.get('genre')
         artist = request.form.get('artist')
         description = request.form.get('description')
 
+        # Validate input.
         error = None
         if title is None:
             error = 'Title is required.'
@@ -100,6 +107,7 @@ def song_edit(id):
             if genre is None:
                 error = 'Unknown genre {}'.format(genre_name)
 
+        # Update the database.
         if error is None:
             song.title = title
             song.genre = genre
@@ -111,6 +119,9 @@ def song_edit(id):
 
             return redirect(url_for('catalog.index'))
 
+        # Report error when rendering rendering after a POST attempt.
+        flash(error)
+
     return render_template(
         'catalog/song_update.html',
         genres=model.get_genres(),
@@ -120,6 +131,8 @@ def song_edit(id):
 
 @bp.route('/song/<int:id>/delete', methods=('GET', 'POST'))
 def song_delete(id):
+    # Delete is a simple confirmation form. If posted then delete, otherwise
+    # just render the page.
     if request.method == 'POST':
         song = model.get_song(id)
         model.db.session.delete(song)
