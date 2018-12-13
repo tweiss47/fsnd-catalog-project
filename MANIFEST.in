@@ -1,0 +1,3 @@
+graft songcat/static
+graft songcat/templates
+global-exclude *.pyc

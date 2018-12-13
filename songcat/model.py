@@ -67,9 +67,9 @@ def init_model_command():
     db.create_all()
 
 
-@click.command('add-test-data')
+@click.command('init-test-data')
 @with_appcontext
-def add_test_data():
+def init_test_data():
     genres = {
         'Folk': Genre(name='Folk'),
         'Blues': Genre(name='Blues'),
