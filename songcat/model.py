@@ -74,7 +74,7 @@ def init_model_command():
 
 @click.command('init-test-data')
 @with_appcontext
-def init_test_data():
+def init_test_data_command():
     '''Add some songs and the list of genres to the database.'''
     genres = {
         'Folk': Genre(name='Folk'),

@@ -24,7 +24,7 @@ def create_app():
     from . import model
     model.db.init_app(app)
     app.cli.add_command(model.init_model_command)
-    app.cli.add_command(model.add_test_data)
+    app.cli.add_command(model.init_test_data_command)
 
     # register blueprints
     from . import auth
