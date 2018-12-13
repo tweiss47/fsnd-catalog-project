@@ -1,5 +1,9 @@
 {% extends 'auth/base.html' %}
 
+{% block metadata %}
+    <meta name="google-signin-client_id" content="608830178668-2mdo879m5gltao8eqa1s80bd52ot8d3m.apps.googleusercontent.com">
+{% endblock %}
+
 {% block header %}
 <h1>{% block title %}Sign In{% endblock %}</h1>
 <p>Not a member yet? <a href="{{ url_for('auth.register') }}">Sign up now</a></p>
@@ -14,5 +18,32 @@
         <input name="password" id="password" type="password" require>
         <button type="submit">Sign In</button>
     </form>
-    <!-- TODO add external providers -->
+    <p>Or sign in with one of the following authentication providers:</p>
+    <div class="auth-providers">
+        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    </div>
+    <script>
+        function onSignIn(googleUser) {
+            var id_token = googleUser.getAuthResponse().id_token;
+            sendTokenToServer(id_token);
+        }
+
+        function sendTokenToServer(id_token) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "{{ url_for('auth.gconnect')}}");
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    console.log("Signed in as: " + xhr.responseText);
+                    window.location.href = "{{ url_for('catalog.index') }}"
+                }
+                else {
+                    console.log("An error occurred.");
+                    console.log(xhr.responseText);
+                }
+            };
+            xhr.send("id_token=" + id_token + "&state={{ state }}");
+        }
+    </script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
 {% endblock %}

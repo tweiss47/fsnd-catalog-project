@@ -3,6 +3,8 @@
     <head>
         <title>{% block title %}{% endblock %} - Songcat</title>
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}">
+        {% block metadata %}
+        {% endblock %}
     </head>
     <body>
         <nav>

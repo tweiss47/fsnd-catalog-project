@@ -76,10 +76,11 @@ nav ul li a {
     margin-left: 1em;
     flex-direction: row;
 }
-.content form {
+.content > form {
     margin-left: 1em;
     display: flex;
     flex-direction: column;
+    width: 40%
 }
 .content label {
     font-weight: bold;
@@ -114,5 +115,11 @@ button:focus {
 #add-song {
     display: inline-block;
     margin-left: 0;
+    margin-bottom: 0.5em;
+}
+.auth-providers {
+    margin-left: 1em;
+}
+.auth-providers > * {
     margin-bottom: 0.5em;
 }

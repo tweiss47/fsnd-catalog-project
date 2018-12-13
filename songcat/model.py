@@ -14,6 +14,16 @@ class User(db.Model):
     username = db.Column(db.String(128), nullable=False)
     password = db.Column(db.String(128), nullable=True)
     provider = db.Column(db.String(64), nullable=False)
+    provider_uid = db.Column(db.String(64), nullable=False)
+
+    @property
+    def serialize(self):
+        return {
+            'email': self.email,
+            'username': self.username,
+            'provider': self.provider,
+            'provider_uid': self.provider_uid
+        }
 
 
 class Genre(db.Model):
@@ -67,7 +77,8 @@ def add_test_data():
         username='Bob',
         email='bob@dobbs.com',
         password=generate_password_hash('welcome'),
-        provider='local'
+        provider='local',
+        provider_uid='bob@dobbs.com'
     )
     db.session.add(test_user)
 
