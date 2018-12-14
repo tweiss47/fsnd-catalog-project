@@ -9,6 +9,7 @@ from werkzeug.exceptions import BadRequest
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from os import urandom
+import functools
 import json
 from . import model
 
@@ -183,8 +184,19 @@ def gconnect():
     return response
 
 
-# Should be validating the state token on local login as well
 def validate_csrf_token():
+    # check to see if a valid state parameter was submitted on POST
     state = request.form.get('state', None)
     if state is None or state != session['state']:
         raise BadRequest('Invalid form submision.')
+
+
+def signin_required(view):
+    # decorator that enforces sign in for views that require auth
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if g.user is None:
+            return redirect(url_for('auth.signin'))
+        return view(**kwargs)
+
+    return wrapped_view

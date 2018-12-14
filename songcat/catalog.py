@@ -2,6 +2,7 @@ from flask import (
     Blueprint, render_template, request, flash, redirect, url_for, g
 )
 from . import model
+from songcat.auth import signin_required
 
 
 bp = Blueprint('catalog', __name__)
@@ -35,6 +36,7 @@ def song_view(id):
 
 
 @bp.route('/song/add', methods=('GET', 'POST'))
+@signin_required
 def song_add():
     # When invoked from the genre view in_genre is passed as a parameter
     in_genre = request.args.get('in_genre', '')
@@ -82,6 +84,7 @@ def song_add():
 
 
 @bp.route('/song/<int:id>/edit', methods=('GET', 'POST'))
+@signin_required
 def song_edit(id):
     song = model.get_song(id)
 
@@ -101,7 +104,7 @@ def song_edit(id):
         elif artist is None:
             error = 'Artist is required.'
         elif song.user.id != g.user.id:
-            error = 'Songcat entry owned by {}'.format(song.user_id)
+            error = 'Songcat entry owned by {}'.format(song.user.username)
         else:
             genre = model.get_genre(genre_name)
             if genre is None:
@@ -130,14 +133,23 @@ def song_edit(id):
 
 
 @bp.route('/song/<int:id>/delete', methods=('GET', 'POST'))
+@signin_required
 def song_delete(id):
-    # Delete is a simple confirmation form. If posted then delete, otherwise
-    # just render the page.
     if request.method == 'POST':
         song = model.get_song(id)
-        model.db.session.delete(song)
-        model.db.session.commit()
-        return redirect(url_for('catalog.index'))
+
+        # Validate that the user owns the song
+        error = None
+        if song.user_id != g.user.id:
+            error = 'Songcat entry owned by {}'.format(song.user.username)
+
+        if error is None:
+            model.db.session.delete(song)
+            model.db.session.commit()
+            return redirect(url_for('catalog.index'))
+
+        # Report errors before rendering on an invalid post
+        flash(error)
 
     return render_template(
         'catalog/song_delete.html',
