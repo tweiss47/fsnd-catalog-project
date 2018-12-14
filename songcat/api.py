@@ -1,4 +1,3 @@
-# TODO
 # The current api only supports read operations, but has placeholder routes
 # and verbs for a more complete implementation. Write operations will return
 # 403.

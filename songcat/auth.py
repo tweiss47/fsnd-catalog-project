@@ -5,6 +5,7 @@ from flask import (
 from werkzeug.security import (
     check_password_hash, generate_password_hash, hashlib
 )
+from werkzeug.exceptions import BadRequest
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from os import urandom
@@ -19,6 +20,7 @@ bp = Blueprint('auth', __name__)
 def signin():
     if request.method == 'POST':
         # POST request on the sign in form implements local login.
+        validate_csrf_token()
 
         # Gather form data.
         email = request.form['email']
@@ -43,7 +45,6 @@ def signin():
 
         flash(error)
 
-    # TODO - pass client id and application here rather than in the template
     state = hashlib.sha256(urandom(1024)).hexdigest()
     session['state'] = state
     return render_template('auth/signin.html', state=state)
@@ -57,6 +58,9 @@ def load_user():
         g.user = None
     else:
         g.user = model.User.query.filter(model.User.id == user_id).first()
+
+    # Add the google client id to the request context
+    g.google_client_id = GOOGLE_CLIENT_ID
 
 
 @bp.route('/signout')
@@ -113,7 +117,7 @@ def register():
 # Support the google auth provider. Will need to make this more generic
 # if other providers are supported in the future.
 
-CLIENT_ID = (
+GOOGLE_CLIENT_ID = (
     '608830178668-2mdo879m5gltao8eqa1s80bd52ot8d3m'
     '.apps.googleusercontent.com'
 )
@@ -121,18 +125,8 @@ CLIENT_ID = (
 
 @bp.route('/gconnect', methods=('POST', ))
 def gconnect():
-    # Check client CSRF token. TODO refactor so this can be done for the
-    # local provider as well.
-    state = request.form.get('state', None)
-    if state is None:
-        response = make_response(
-            json.dumps('No CSRF state token provided', 400)
-        )
-
-    if state != session['state']:
-        response = make_response(
-            json.dumps('CSRF state token is invalid', 400)
-        )
+    # Check client CSRF token.
+    validate_csrf_token()
 
     # Get the id token from the request.
     token = request.form.get('id_token', None)
@@ -148,7 +142,7 @@ def gconnect():
         idinfo = id_token.verify_oauth2_token(
             token,
             requests.Request(),
-            CLIENT_ID
+            GOOGLE_CLIENT_ID
         )
 
         if idinfo['iss'] not in [
@@ -189,7 +183,8 @@ def gconnect():
     return response
 
 
-# TODO
 # Should be validating the state token on local login as well
-def validateCSRF(state):
-    return True
+def validate_csrf_token():
+    state = request.form.get('state', None)
+    if state is None or state != session['state']:
+        raise BadRequest('Invalid form submision.')

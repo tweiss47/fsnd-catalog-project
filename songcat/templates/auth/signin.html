@@ -1,7 +1,7 @@
 {% extends 'auth/base.html' %}
 
 {% block metadata %}
-    <meta name="google-signin-client_id" content="608830178668-2mdo879m5gltao8eqa1s80bd52ot8d3m.apps.googleusercontent.com">
+    <meta name="google-signin-client_id" content="{{ g.google_client_id }}">
 {% endblock %}
 
 {% block header %}
@@ -16,6 +16,7 @@
         <input name="email" id="email" required>
         <label for="password">Password</label>
         <input name="password" id="password" type="password" require>
+        <input name="state" id="state" type="hidden" value="{{ state }}">
         <button type="submit">Sign In</button>
     </form>
     <p>Or sign in with one of the following authentication providers:</p>

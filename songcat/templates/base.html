@@ -3,7 +3,7 @@
     <head>
         <title>{% block title %}{% endblock %} - Songcat</title>
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}">
-        <meta name="google-signin-client_id" content="608830178668-2mdo879m5gltao8eqa1s80bd52ot8d3m.apps.googleusercontent.com">
+        <meta name="google-signin-client_id" content="{{ g.google_client_id }}">
         <script>
             function onLoad() {
                 gapi.load('auth2', function() {
