@@ -7,7 +7,7 @@ from flask import (
     Blueprint, request, make_response, jsonify
 )
 import json
-from . import model
+from songcat.model import get_all_songs, get_song
 
 
 # use /api as the route for all API calls.
@@ -17,7 +17,7 @@ bp = Blueprint('api', __name__, url_prefix='/api')
 @bp.route('/song')
 def song_list():
     # Get all the songs.
-    songs = model.get_all_songs()
+    songs = get_all_songs()
     return jsonify(Songs=[s.serialize for s in songs])
 
 
@@ -33,7 +33,7 @@ def song_add():
 def song_action(id):
     # Peform an action on an individual song.
     if request.method == 'GET':
-        song = model.get_song(id)
+        song = get_song(id)
         if song is None:
             response = make_response(
                 json.dumps('No song found with id {}'.format(id)), 404

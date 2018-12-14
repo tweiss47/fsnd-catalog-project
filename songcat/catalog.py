@@ -1,7 +1,9 @@
 from flask import (
     Blueprint, render_template, request, flash, redirect, url_for, g
 )
-from . import model
+from songcat.model import (
+    get_genres, get_songs, songs_for, get_song, get_genre, Song, db
+)
 from songcat.auth import signin_required
 
 
@@ -12,8 +14,8 @@ bp = Blueprint('catalog', __name__)
 def index():
     return render_template(
         'catalog/index.html',
-        genres=model.get_genres(),
-        songs=model.get_songs(10)
+        genres=get_genres(),
+        songs=get_songs(10)
     )
 
 
@@ -21,9 +23,9 @@ def index():
 def genre_view(name):
     return render_template(
         'catalog/genre_view.html',
-        genres=model.get_genres(),
+        genres=get_genres(),
         selected=name,
-        songs=model.songs_for(name)
+        songs=songs_for(name)
     )
 
 
@@ -31,7 +33,7 @@ def genre_view(name):
 def song_view(id):
     return render_template(
         'catalog/song_view.html',
-        song=model.get_song(id)
+        song=get_song(id)
     )
 
 
@@ -56,21 +58,21 @@ def song_add():
         elif artist is None:
             error = 'Artist is required.'
         else:
-            genre = model.get_genre(genre_name)
+            genre = get_genre(genre_name)
             if genre is None:
                 error = 'Unknown genre {}'.format(genre_name)
 
         # Commit the new song.
         if error is None:
-            song = model.Song(
+            song = Song(
                 title=title,
                 genre=genre,
                 artist=artist,
                 description=description,
                 user=g.user
             )
-            model.db.session.add(song)
-            model.db.session.commit()
+            db.session.add(song)
+            db.session.commit()
             return redirect(url_for('catalog.index'))
 
         # Report error when rendering rendering after a POST attempt.
@@ -78,7 +80,7 @@ def song_add():
 
     return render_template(
         'catalog/song_add.html',
-        genres=model.get_genres(),
+        genres=get_genres(),
         in_genre=in_genre
     )
 
@@ -86,7 +88,7 @@ def song_add():
 @bp.route('/song/<int:id>/edit', methods=('GET', 'POST'))
 @signin_required
 def song_edit(id):
-    song = model.get_song(id)
+    song = get_song(id)
 
     if request.method == 'POST':
         # Gather form input.
@@ -106,7 +108,7 @@ def song_edit(id):
         elif song.user.id != g.user.id:
             error = 'Songcat entry owned by {}'.format(song.user.username)
         else:
-            genre = model.get_genre(genre_name)
+            genre = get_genre(genre_name)
             if genre is None:
                 error = 'Unknown genre {}'.format(genre_name)
 
@@ -117,8 +119,8 @@ def song_edit(id):
             song.artist = artist
             song.description = description
 
-            model.db.session.add(song)
-            model.db.session.commit()
+            db.session.add(song)
+            db.session.commit()
 
             return redirect(url_for('catalog.index'))
 
@@ -127,7 +129,7 @@ def song_edit(id):
 
     return render_template(
         'catalog/song_update.html',
-        genres=model.get_genres(),
+        genres=get_genres(),
         song=song
     )
 
@@ -136,7 +138,7 @@ def song_edit(id):
 @signin_required
 def song_delete(id):
     if request.method == 'POST':
-        song = model.get_song(id)
+        song = get_song(id)
 
         # Validate that the user owns the song
         error = None
@@ -144,8 +146,8 @@ def song_delete(id):
             error = 'Songcat entry owned by {}'.format(song.user.username)
 
         if error is None:
-            model.db.session.delete(song)
-            model.db.session.commit()
+            db.session.delete(song)
+            db.session.commit()
             return redirect(url_for('catalog.index'))
 
         # Report errors before rendering on an invalid post
@@ -153,5 +155,5 @@ def song_delete(id):
 
     return render_template(
         'catalog/song_delete.html',
-        song=model.get_song(id)
+        song=get_song(id)
     )

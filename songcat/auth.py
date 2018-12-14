@@ -11,7 +11,7 @@ from google.auth.transport import requests
 from os import urandom
 import functools
 import json
-from . import model
+from songcat.model import User, db
 
 
 bp = Blueprint('auth', __name__)
@@ -29,8 +29,8 @@ def signin():
 
         # Validate input.
         error = None
-        user = model.User.query.filter(
-            model.User.provider_uid == email
+        user = User.query.filter(
+            User.provider_uid == email
         ).first()
 
         if user is None:
@@ -58,7 +58,7 @@ def load_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = model.User.query.filter(model.User.id == user_id).first()
+        g.user = User.query.filter(User.id == user_id).first()
 
     # Add the google client id to the request context
     g.google_client_id = GOOGLE_CLIENT_ID
@@ -86,23 +86,23 @@ def register():
         elif password is None:
             error = 'Password is required to register.'
         else:
-            user = model.User.query.filter(
-                model.User.provider_uid == email
+            user = User.query.filter(
+                User.provider_uid == email
             ).first()
             if user is not None:
                 error = 'User with email {} already registered.'.format(email)
 
         if error is None:
             # Add the new user to the database.
-            user = model.User(
+            user = User(
                 email=email,
                 password=generate_password_hash(password),
                 username=username,
                 provider='local',
                 provider_uid=email
             )
-            model.db.session.add(user)
-            model.db.session.commit()
+            db.session.add(user)
+            db.session.commit()
 
             # Add the user to the session.
             session.clear()
@@ -161,18 +161,18 @@ def gconnect():
 
     # Save the user info if the user is new
     user_id = idinfo['sub']
-    user = model.User.query.filter(
-        model.User.provider == 'google' and model.User.provider_uid == user_id
+    user = User.query.filter(
+        User.provider == 'google' and User.provider_uid == user_id
     ).first()
     if user is None:
-        user = model.User(
+        user = User(
             provider='google',
             email=idinfo['email'],
             username=idinfo['given_name'],
             provider_uid=user_id
         )
-        model.db.session.add(user)
-        model.db.session.commit()
+        db.session.add(user)
+        db.session.commit()
 
     # Save the user session
     session.clear()
