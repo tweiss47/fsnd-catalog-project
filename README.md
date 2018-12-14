@@ -35,11 +35,12 @@ as well, but following modules need to be available:
 
 ## Running the Server
 
-Set the following environment variable to run the project using the `flask`
+Set the following environment variables to run the project using the `flask`
 command in development mode.
 
 ```
 FLASK_APP=songcat
+FLASK_ENV=development
 ```
 
 To initialize the database run `flask init-model`. This will drop tables and
